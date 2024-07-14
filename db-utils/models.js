@@ -42,3 +42,96 @@ const userSchema = new Schema({
 });
 
 export const User = mongoose.model("User", userSchema);
+
+// Product Model
+const productSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    images: {
+      type: [String], // Array of strings to store image URLs or paths
+      validate: {
+        validator: function (v) {
+          return Array.isArray(v) && v.every((url) => typeof url === "string");
+        },
+        message: "Images must be an array of strings",
+      },
+    },
+    availableQty: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    sellerInfo: {
+      type: new Schema({
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        userId: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        phone: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        address: {
+          type: String,
+          trim: true,
+        },
+      }),
+    },
+  },
+  {
+    timestamps: true, // Adds createdAt and updatedAt timestamps
+  }
+);
+
+export const Product = mongoose.model("Product", productSchema, "products");
+
+const orderSchema = new Schema({
+  orderId: {
+    type: String,
+    required: true,
+  },
+  products: {
+    type: Array,
+  },
+  totalQty: {
+    type: Number,
+    required: true,
+  },
+  orderTotal: {
+    type: Number,
+    required: true,
+  },
+});
+
+export const Order = mongoose.model("Order", orderSchema);

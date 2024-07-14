@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email }, { _id: 0 });
     if (!user) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
@@ -20,9 +20,15 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    console.log("User", user);
+    const userObj = user.toObject();
 
-    res.status(200).json({ msg: "Login successful" });
+    delete userObj.password;
+
+    const authToken = jwt.sign(userObj, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({ msg: "Login successful", userToken: authToken });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
