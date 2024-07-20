@@ -132,6 +132,10 @@ const orderSchema = new Schema({
     type: Number,
     required: true,
   },
+  userId: {
+    type: String,
+    required: true,
+  },
 });
 
 export const Order = mongoose.model("Order", orderSchema);
